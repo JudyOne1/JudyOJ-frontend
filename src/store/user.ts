@@ -42,7 +42,7 @@ export default {
   }),
   actions: {
     async getLoginUser({ commit, state }, payload) {
-      commit("updateUser", { userName: "Judy" });
+      commit("updateUser", payload);
     },
   },
   mutations: {

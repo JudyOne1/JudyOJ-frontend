@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-row id="globleHeader" style="margin-bottom: 16px" align="center">
+    <a-row id="globleHeader" align="center" :wrap="false">
       <a-col flex="100px"></a-col>
       <a-col flex="auto">
         <a-menu
@@ -32,8 +32,9 @@
 <script setup lang="ts">
 import { routes } from "../router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
+import checkAccess from "@/access/checkAccess";
 
 const selectedKeys = ref(["/"]);
 const router = useRouter();
@@ -42,6 +43,22 @@ const store = useStore();
 
 router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
+});
+
+// 展示在菜单的路由数组
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    // 根据权限过滤菜单
+    if (
+      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
+    ) {
+      return false;
+    }
+    return true;
+  });
 });
 
 const doMenuClick = (key: string) => {
