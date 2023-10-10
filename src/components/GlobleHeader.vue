@@ -17,7 +17,7 @@
               <img class="logo" src="../assets/MyLogo.png" />
             </div>
           </a-menu-item>
-          <a-menu-item v-for="item in routes" :key="item.path"
+          <a-menu-item v-for="item in visibleRoutes" :key="item.path"
             >{{ item.name }}
           </a-menu-item>
         </a-menu>
@@ -67,12 +67,12 @@ const doMenuClick = (key: string) => {
   });
 };
 
-setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "Judy",
-    // userRole: ACCESS_ENUM.ADMIN,
-  });
-}, 3000);
+// setTimeout(() => {
+//   store.dispatch("user/getLoginUser", {
+//     userName: "Judy",
+//     userRole: ACCESS_ENUM.ADMIN,
+//   });
+// }, 3000);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
