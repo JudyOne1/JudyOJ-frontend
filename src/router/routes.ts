@@ -8,6 +8,7 @@ import ACCESS_ENUM from "@/access/accessEnum";
 import AdminView from "@/views/AdminView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
+import QuestionView from "@/views/question/QuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -33,7 +34,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "浏览题目",
-    component: HomeView,
+    component: QuestionView,
     meta: {},
   },
   {
@@ -69,6 +70,7 @@ export const routes: Array<RouteRecordRaw> = [
     props: true,
     meta: {
       access: ACCESS_ENUM.USER,
+      hideInMenu: true,
     },
   },
   {
