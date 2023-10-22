@@ -19,7 +19,7 @@
 <style scoped>
 #userLayout {
   text-align: center;
-  background: url("../assets/scattered-forcefields.png") 0% 0%/100% 100%;
+  background: url("../assets/blob-scene-haikei.png") 0% 0%/100% 100%;
 }
 
 #userLayout.logo {
@@ -38,11 +38,7 @@
 }
 
 #userLayout .footer {
-  //background: #efefef; padding: 16px; position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
+  //background: #efefef; padding: 16px; position: sticky; bottom: 0; left: 0; right: 0; text-align: center;
 }
 </style>
 <script></script>
