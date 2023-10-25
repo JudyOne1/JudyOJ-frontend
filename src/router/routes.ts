@@ -9,6 +9,8 @@ import AdminView from "@/views/AdminView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionView from "@/views/question/QuestionView.vue";
+import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
+import UserProfileView from "@/views/user/UserProfileView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -38,6 +40,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {},
   },
   {
+    path: "/question_submit",
+    name: "浏览题目提交",
+    component: QuestionSubmitView,
+    meta: {},
+  },
+  {
     path: "/add/question",
     name: "创建题目",
     component: AddQuestionView,
@@ -64,6 +72,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    //todo 个人主页需要装修
+    path: "/profile/:id",
+    name: "个人主页",
+    component: UserProfileView,
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
     path: "/view/question/:id",
     name: "在线做题页面",
     component: ViewQuestionView,
@@ -75,7 +92,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/about",
-    name: "关于我",
+    name: "关于此网站",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

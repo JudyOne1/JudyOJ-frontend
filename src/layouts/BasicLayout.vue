@@ -8,7 +8,7 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="http://JudyBlog.top"> SuperOJ By Judy </a>
+        <a href="http://JudyBlog.top"> OJ_System By Judy </a>
       </a-layout-footer>
     </a-layout>
   </div>

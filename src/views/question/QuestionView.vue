@@ -1,8 +1,12 @@
 <template>
   <div id="QuestionView">
-    <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="名称" style="min-width: 240px">
-        <a-input v-model="searchParams.title" placeholder="请输入名称" />
+    <a-form
+      :model="searchParams"
+      layout="inline"
+      style="width: 80%; margin: auto auto"
+    >
+      <a-form-item field="title" label="题目名称" style="min-width: 240px">
+        <a-input v-model="searchParams.title" placeholder="请输入题目名称" />
       </a-form-item>
       <a-form-item field="tags" label="标签" style="min-width: 240px">
         <a-input-tag v-model="searchParams.tags" placeholder="请输入标签" />
@@ -23,6 +27,7 @@
         total,
       }"
       @page-change="onPageChange"
+      style="max-width: 80%; margin: auto auto; text-align: center"
     >
       <template #tags="{ record }">
         <a-space wrap>
@@ -107,10 +112,10 @@ onMounted(() => {
 // {id: "1", title: "A+ D", content: "新的题目内容", tags: "["二叉树"]", answer: "新的答案", submitNum: 0,…}
 
 const columns = [
-  {
-    title: "题号",
-    dataIndex: "id",
-  },
+  // {
+  //   title: "题号",
+  //   dataIndex: "id",
+  // },
   {
     title: "题目名称",
     dataIndex: "title",

@@ -1,6 +1,6 @@
 <template>
   <div id="userLogin">
-    <h1>This is an login page</h1>
+    <!--    <h1>This is an login page</h1>-->
     <a-form
       style="max-width: 480px; margin: 0 auto"
       label-align="left"
@@ -20,8 +20,8 @@
       </a-form-item>
       <a-form-item>
         <a-button type="primary" style="width: 480px" html-type="submit"
-          >登录</a-button
-        >
+          >登录
+        </a-button>
       </a-form-item>
     </a-form>
   </div>

@@ -23,7 +23,24 @@
         </a-menu>
       </a-col>
       <a-col flex="100px">
-        <div>{{ store.state.user?.loginUser.userName ?? "未登录" }}</div>
+        <div v-if="flag == true">
+          <a
+            id="pleaseLogin"
+            href="/user/login"
+            style="
+              font-family: Arial;
+              font-size: 16px;
+              font-weight: bold;
+              color: #165dff;
+            "
+            >点我登录</a
+          >
+        </div>
+        <div v-else>
+          <a-button type="text" shape="round" size="large" @click="goToProfile">
+            {{ store.state.user?.loginUser.userName ?? "未登录" }}
+          </a-button>
+        </div>
       </a-col>
     </a-row>
   </div>
@@ -40,6 +57,10 @@ const selectedKeys = ref(["/"]);
 const router = useRouter();
 const store = useStore();
 // const route = useRoute();
+let flag = false;
+if (store.state.user?.loginUser.userName == "未登录") {
+  flag = true;
+}
 
 router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
@@ -60,6 +81,13 @@ const visibleRoutes = computed(() => {
     return true;
   });
 });
+
+const goToProfile = (id: string) => {
+  // 在这里实现跳转到个人页面的逻辑
+  router.push({
+    path: `/profile/${id}`,
+  });
+};
 
 const doMenuClick = (key: string) => {
   router.push({

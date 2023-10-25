@@ -1,16 +1,25 @@
 <template>
   <div id="addQuestionView">
-    <h2 style="margin: 50px 600px">创建题目</h2>
+    <h2 style="text-align: center">创建题目</h2>
     <a-form
       :model="form"
-      label-align="left"
-      style="max-width: 480px; margin: 0 auto"
+      label-align="center"
+      style="margin: auto auto; width: 50%"
     >
       <a-form-item field="title" label="标题">
-        <a-input v-model="form.title" placeholder="请输入标题" />
+        <a-input
+          v-model="form.title"
+          placeholder="请输入标题"
+          style="width: 450px"
+        />
       </a-form-item>
       <a-form-item field="tags" label="标签">
-        <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
+        <a-input-tag
+          v-model="form.tags"
+          placeholder="请选择标签"
+          allow-clear
+          style="width: 450px"
+        />
       </a-form-item>
       <a-form-item field="content" label="题目内容">
         <MdEditor :value="form.content" :handle-change="onContentChange" />
@@ -61,7 +70,7 @@
         >
           <a-space
             direction="vertical"
-            style="margin-top: 16px; min-width: 640px"
+            style="margin-top: 16px; min-width: 480px"
           >
             <a-form-item
               :field="`form.judgeCase[${index}].input`"

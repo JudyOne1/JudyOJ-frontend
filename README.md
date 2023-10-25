@@ -1,5 +1,6 @@
 # oj-frontend
 
+openapi --input http://localhost:8104/api/v2/api-docs --output ./backapi --client axios
 ## Project setup
 ```
 yarn install
