@@ -9,9 +9,13 @@ import type { JudgeConfig } from './JudgeConfig';
 export type QuestionEditRequest = {
     answer?: string;
     content?: string;
+    countCode?: string;
+    defaultCode?: string;
+    helpCode?: string;
     id?: number;
     judgeCase?: Array<JudgeCase>;
     judgeConfig?: JudgeConfig;
+    mode?: number;
     tags?: Array<string>;
     title?: string;
 };

@@ -97,6 +97,8 @@ const question = ref<QuestionVO>();
 const form = ref<QuestionSubmitAddRequest>({
   code: "",
   language: "java",
+  //todo 修改模式选择
+  modeSelect: 1,
 });
 
 const loadData = async () => {
