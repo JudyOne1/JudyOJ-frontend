@@ -1,6 +1,7 @@
 <template>
   <div id="manageQuestionView">
     <a-table
+      bordered="ture"
       :ref="tableRef"
       :columns="columns"
       :data="dataList"
@@ -12,6 +13,13 @@
       }"
       @page-change="onPageChange"
     >
+      <template #tags="{ record }">
+        <a-space wrap>
+          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
+            >{{ tag }}
+          </a-tag>
+        </a-space>
+      </template>
       <template #optional="{ record }">
         <a-space>
           <a-button type="primary" @click="doUpdate(record)"> 修改</a-button>
@@ -49,6 +57,19 @@ const loadData = async () => {
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = res.data.total;
+    dataList.value.map((item) => {
+      item.tags = JSON.parse(item.tags);
+    });
+    dataList.value.map((item) => {
+      const date = new Date(item.createTime);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 注意月份从0开始，所以要加1
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+
+      item.createTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+    });
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -73,24 +94,26 @@ onMounted(() => {
 const columns = [
   {
     title: "id",
+    tooltip: true,
+    ellipsis: true,
     dataIndex: "id",
   },
   {
     title: "标题",
     dataIndex: "title",
   },
-  {
-    title: "内容",
-    dataIndex: "content",
-  },
+  // {
+  //   title: "内容",
+  //   dataIndex: "content",
+  // },
   {
     title: "标签",
-    dataIndex: "tags",
+    slotName: "tags",
   },
-  {
-    title: "答案",
-    dataIndex: "answer",
-  },
+  // {
+  //   title: "答案",
+  //   dataIndex: "answer",
+  // },
   {
     title: "提交数",
     dataIndex: "submitNum",
@@ -107,10 +130,10 @@ const columns = [
     title: "判题用例",
     dataIndex: "judgeCase",
   },
-  {
-    title: "用户id",
-    dataIndex: "userId",
-  },
+  // {
+  //   title: "用户id",
+  //   dataIndex: "userId",
+  // },
   {
     title: "创建时间",
     dataIndex: "createTime",
