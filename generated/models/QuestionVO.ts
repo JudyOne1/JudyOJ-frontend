@@ -13,6 +13,7 @@ export type QuestionVO = {
     favourNum?: number;
     id?: number;
     judgeConfig?: JudgeConfig;
+    mode?: number;
     submitNum?: number;
     tags?: Array<string>;
     thumbNum?: number;

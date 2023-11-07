@@ -20,6 +20,17 @@
           </a-tag>
         </a-space>
       </template>
+      <template #judgeConfig="{ record }">
+        <a-space wrap>
+          <a-tag
+            v-for="(value, key) of record.judgeConfig"
+            :key="key"
+            color="blue"
+            bordered
+            >{{ key }}:{{ value }}
+          </a-tag>
+        </a-space>
+      </template>
       <template #optional="{ record }">
         <a-space>
           <a-button type="primary" @click="doUpdate(record)"> 修改</a-button>
@@ -70,6 +81,9 @@ const loadData = async () => {
 
       item.createTime = `${year}-${month}-${day} ${hours}:${minutes}`;
     });
+    dataList.value.map((item) => {
+      item.judgeConfig = JSON.parse(item.judgeConfig);
+    });
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -97,6 +111,7 @@ const columns = [
     tooltip: true,
     ellipsis: true,
     dataIndex: "id",
+    width: 120,
   },
   {
     title: "标题",
@@ -117,17 +132,27 @@ const columns = [
   {
     title: "提交数",
     dataIndex: "submitNum",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+    width: 100,
   },
   {
     title: "通过数",
     dataIndex: "acceptedNum",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+    width: 100,
   },
   {
     title: "判题配置",
-    dataIndex: "judgeConfig",
+    slotName: "judgeConfig",
   },
   {
     title: "判题用例",
+    tooltip: true,
+    ellipsis: true,
     dataIndex: "judgeCase",
   },
   // {
@@ -137,10 +162,14 @@ const columns = [
   {
     title: "创建时间",
     dataIndex: "createTime",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "操作",
     slotName: "optional",
+    width: 160,
   },
 ];
 

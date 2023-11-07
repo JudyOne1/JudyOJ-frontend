@@ -18,6 +18,20 @@
       </a-form-item>
       <a-form-item>
         <a-button type="primary" @click="doSubmit">搜索</a-button>
+        <a-button
+          type="primary"
+          status="success"
+          @click="onlyMe"
+          style="width: 100px; margin-left: 20px"
+          >只看我的
+        </a-button>
+        <a-button
+          type="outline"
+          status="warning"
+          @click="reset"
+          style="width: 50px; margin-left: 20px"
+          >重置
+        </a-button>
       </a-form-item>
     </a-form>
     <a-divider size="0" />
@@ -34,7 +48,15 @@
       @page-change="onPageChange"
     >
       <template #judgeInfo="{ record }">
-        {{ JSON.stringify(record.judgeInfo) }}
+        <a-space wrap>
+          <a-tag
+            v-for="(value, key) of record.judgeInfo"
+            :key="key"
+            color="blue"
+            bordered
+            >{{ key }}:{{ value ? value : "暂无数据" }}
+          </a-tag>
+        </a-space>
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
@@ -53,6 +75,7 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { useStore } from "vuex";
 
 const tableRef = ref();
 
@@ -63,6 +86,7 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   language: undefined,
   pageSize: 10,
   current: 1,
+  userId: undefined,
 });
 
 const loadData = async () => {
@@ -79,6 +103,27 @@ const loadData = async () => {
   } else {
     message.error("加载失败，" + res.message);
   }
+  //判题状态（0 - 待判题、1 - 判题中、2 - 成功、3 - 失败）
+  dataList.value.map((item) => {
+    switch (item.status) {
+      case 0:
+        item.status = "待判题";
+        break;
+      case 1:
+        item.status = "判题中...";
+        break;
+      case 2:
+        item.status = "成功";
+        break;
+      case 3:
+        item.status = "失败";
+        break;
+    }
+  });
+  dataList.value.map((item) => {
+    item.judgeInfo = JSON.stringify(item.judgeInfo);
+    item.judgeInfo = JSON.parse(item.judgeInfo);
+  });
 };
 
 /**
@@ -97,12 +142,23 @@ onMounted(() => {
 
 const columns = [
   {
+    title: "题号",
+    dataIndex: "questionId",
+    tooltip: true,
+    ellipsis: true,
+    width: 120,
+  },
+  {
     title: "提交号",
     dataIndex: "id",
+    tooltip: true,
+    ellipsis: true,
+    width: 120,
   },
   {
     title: "编程语言",
     dataIndex: "language",
+    width: 90,
   },
   {
     title: "判题信息",
@@ -111,18 +167,24 @@ const columns = [
   {
     title: "判题状态",
     dataIndex: "status",
+    width: 120,
   },
   {
     title: "题目 id",
     dataIndex: "questionId",
+    width: 120,
   },
   {
     title: "提交者 id",
     dataIndex: "userId",
+    tooltip: true,
+    ellipsis: true,
+    width: 120,
   },
   {
     title: "创建时间",
     slotName: "createTime",
+    width: 120,
   },
 ];
 
@@ -153,6 +215,34 @@ const doSubmit = () => {
   searchParams.value = {
     ...searchParams.value,
     current: 1,
+  };
+};
+const store = useStore();
+const onlyMe = () => {
+  if (!store.state.user) {
+    message.error("请登录");
+    return;
+  }
+  // 这里需要重置搜索页号
+  searchParams.value = {
+    ...searchParams.value,
+    userId: store.state.user.loginUser.id,
+    current: 1,
+  };
+};
+
+const reset = () => {
+  if (!store.state.user) {
+    message.error("请登录");
+    return;
+  }
+  // 这里需要重置搜索页号
+  searchParams.value = {
+    questionId: undefined,
+    language: undefined,
+    pageSize: 10,
+    current: 1,
+    userId: undefined,
   };
 };
 </script>

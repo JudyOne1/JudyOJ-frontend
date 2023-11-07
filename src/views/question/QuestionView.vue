@@ -113,12 +113,20 @@ onMounted(() => {
 // {id: "1", title: "A+ D", content: "新的题目内容", tags: "["二叉树"]", answer: "新的答案", submitNum: 0,…}
 
 const columns = [
-  // {
-  //   title: "题号",
-  //   dataIndex: "id",
-  // },
+  {
+    title: "题号",
+    tooltip: true,
+    ellipsis: true,
+    dataIndex: "id",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+    width: 120,
+  },
   {
     title: "题目名称",
+    tooltip: true,
+    ellipsis: true,
     dataIndex: "title",
   },
   {
@@ -128,13 +136,22 @@ const columns = [
   {
     title: "通过率",
     slotName: "acceptedRate",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+    width: 150,
   },
   {
     title: "创建时间",
     slotName: "createTime",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+    width: 120,
   },
   {
     slotName: "optional",
+    width: 120,
   },
 ];
 

@@ -19,8 +19,19 @@
         />
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" style="width: 480px" html-type="submit"
+        <a-button
+          type="primary"
+          style="width: 480px"
+          html-type="submit"
+          shape="round"
           >登录
+        </a-button>
+        <a-button
+          type="secondary"
+          style="width: 180px; margin-left: 15px"
+          @click="goToRegisterPage"
+          shape="round"
+          >还没账号？点我注册
         </a-button>
       </a-form-item>
     </a-form>
@@ -41,6 +52,13 @@ const form = reactive({
   userPassword: "",
 });
 const handleSubmit = async () => {
+  if (form.userPassword == "") {
+    message.info("请输入密码");
+    return;
+  } else if (form.userAccount == "") {
+    message.info("请输入账号");
+    return;
+  }
   const res = await UserControllerService.userLoginUsingPost(form);
   if (res.code === 0) {
     // alert("login success");
@@ -55,5 +73,12 @@ const handleSubmit = async () => {
     message.error("失败原因: " + res.message);
   }
   // alert(JSON.stringify(form));
+};
+
+const goToRegisterPage = () => {
+  router.push({
+    path: "/user/register",
+    replace: true,
+  });
 };
 </script>

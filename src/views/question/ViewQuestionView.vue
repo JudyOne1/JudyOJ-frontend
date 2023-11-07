@@ -32,10 +32,8 @@
               <MdViewer :value="question.content || '出现问题，请联系管理员'" />
             </a-card>
           </a-tab-pane>
-          <a-tab-pane key="comments" title="评论"> 评论区</a-tab-pane>
-          <a-tab-pane key="idea" title="思路">
-            Content of Tab Panel 3
-          </a-tab-pane>
+          <a-tab-pane key="comments" title="评论"> 评论区开发中</a-tab-pane>
+          <a-tab-pane key="idea" title="思路"> 思路开发中</a-tab-pane>
           <a-tab-pane key="answer" title="题解" disabled>
             <!--{{ (question && question.answer) || "暂无题解" }}-->
           </a-tab-pane>
@@ -46,26 +44,45 @@
           <a-form-item
             field="language"
             label="编程语言"
-            style="min-width: 240px"
+            style="min-width: 120px"
           >
             <a-select
               v-model="form.language"
-              :style="{ width: '320px' }"
+              :style="{ width: '120px' }"
               placeholder="选择编程语言"
             >
               <a-option>java</a-option>
-              <a-option>cpp</a-option>
-              <a-option>go</a-option>
-              <a-option>html</a-option>
+              <a-option disabled>cpp</a-option>
+              <a-option disabled>js</a-option>
+              <a-option disabled>python</a-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item
+            field="modeSelectCN"
+            label="模式选择"
+            style="min-width: 240px"
+          >
+            <a-select
+              v-model="modeSelectCN"
+              :style="{ width: '200px' }"
+              placeholder="选择编程语言"
+            >
+              <a-option :disabled="ACMdisabled">ACM模式</a-option>
+              <a-option :disabled="CCMdisabled">核心代码模式</a-option>
+              <a-option :disabled="CMdisabled">计数器模式</a-option>
             </a-select>
           </a-form-item>
         </a-form>
         <code-editor
-          :value="form.code as string"
+          v-bind:value="form.code as string"
           :language="form.language"
           :handleChange="changeCode"
         />
-        <a-button type="primary" style="min-width: 200px" @click="doSubmit">
+        <a-button
+          type="primary"
+          style="min-width: 200px; margin-top: 20px"
+          @click="doSubmit"
+        >
           提交代码
         </a-button>
       </a-col>
@@ -94,19 +111,58 @@ const props = withDefaults(defineProps<Props>(), {
 
 const question = ref<QuestionVO>();
 
+let ACMdisabled = true;
+let CCMdisabled = true;
+let CMdisabled = true;
+
 const form = ref<QuestionSubmitAddRequest>({
   code: "",
   language: "java",
-  //todo 修改模式选择
   modeSelect: 1,
 });
+
+let modeSelectCN = "ACM模式";
 
 const loadData = async () => {
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
     props.id as any
   );
+  const defaultCode = await QuestionControllerService.getDefaultCodeUsingGet(
+    props.id as any
+  );
+  form.value.code = defaultCode.data;
+  console.log(defaultCode);
+  console.log(form.value.code);
   if (res.code === 0) {
     question.value = res.data;
+    switch (question.value?.mode) {
+      case 1:
+        ACMdisabled = false;
+        break;
+      case 2:
+        CCMdisabled = false;
+        break;
+      case 3:
+        CCMdisabled = false;
+        ACMdisabled = false;
+        break;
+      case 4:
+        CMdisabled = false;
+        break;
+      case 5:
+        CMdisabled = false;
+        ACMdisabled = false;
+        break;
+      case 6:
+        CCMdisabled = false;
+        CMdisabled = false;
+        break;
+      case 7:
+        ACMdisabled = false;
+        CCMdisabled = false;
+        CMdisabled = false;
+        break;
+    }
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -119,10 +175,23 @@ const doSubmit = async () => {
   if (!question.value?.id) {
     return;
   }
+  switch (modeSelectCN) {
+    case "ACM模式":
+      modeSelectCN = "1";
+      break;
+    case "核心代码模式":
+      modeSelectCN = "2";
+      break;
+    case "计数器模式":
+      modeSelectCN = "4";
+      break;
+  }
   const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
+    modeSelect: parseInt(modeSelectCN),
     questionId: question.value.id,
   });
+  console.log(form.value);
   if (res.code === 0) {
     message.success("提交成功");
   } else {
