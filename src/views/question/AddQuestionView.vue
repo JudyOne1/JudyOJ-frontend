@@ -4,7 +4,7 @@
     <a-form
       :model="form"
       label-align="center"
-      style="margin: auto auto; width: 50%"
+      style="margin: auto auto; width: 39%"
       layout="vertical"
     >
       <a-form-item field="title" label="标题">
@@ -82,7 +82,7 @@
           label="测试用例配置"
           :content-flex="false"
           :merge-props="false"
-          style="margin-left: 0px"
+          style="margin-left: 0px; margin-top: 20px"
           v-if="showInputACM"
         >
           <a-form-item

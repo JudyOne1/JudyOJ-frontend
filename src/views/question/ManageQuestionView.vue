@@ -12,6 +12,7 @@
         total,
       }"
       @page-change="onPageChange"
+      style="width: 80%; margin: auto auto"
     >
       <template #tags="{ record }">
         <a-space wrap>

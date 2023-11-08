@@ -29,11 +29,13 @@
                   </a-tag>
                 </a-space>
               </template>
-              <MdViewer :value="question.content || '出现问题，请联系管理员'" />
+              <MdViewer
+                :value="question.content || '出现未知错误，请联系管理员'"
+              />
             </a-card>
           </a-tab-pane>
           <a-tab-pane key="comments" title="评论"> 评论区开发中</a-tab-pane>
-          <a-tab-pane key="idea" title="思路"> 思路开发中</a-tab-pane>
+          <a-tab-pane key="idea" title="思路"> 思路区开发中</a-tab-pane>
           <a-tab-pane key="answer" title="题解" disabled>
             <!--{{ (question && question.answer) || "暂无题解" }}-->
           </a-tab-pane>
@@ -48,7 +50,7 @@
           >
             <a-select
               v-model="form.language"
-              :style="{ width: '120px' }"
+              :style="{ width: '150px' }"
               placeholder="选择编程语言"
             >
               <a-option>java</a-option>
@@ -64,17 +66,38 @@
           >
             <a-select
               v-model="modeSelectCN"
-              :style="{ width: '200px' }"
-              placeholder="选择编程语言"
+              :style="{ width: '220px' }"
+              placeholder="选择做题模式"
+              @change="changeMode"
             >
+              <a-option disabled>如果无法获取代码请刷新网站</a-option>
               <a-option :disabled="ACMdisabled">ACM模式</a-option>
               <a-option :disabled="CCMdisabled">核心代码模式</a-option>
               <a-option :disabled="CMdisabled">计数器模式</a-option>
             </a-select>
           </a-form-item>
+          <a-button
+            type="outline"
+            @click="handleBtn"
+            shape="round"
+            status="success"
+            style="margin-left: 60px"
+            >复制代码
+          </a-button>
+          <a-popconfirm content="如果无法格式化代码请刷新网站" type="warning">
+            <a-button
+              type="outline"
+              @click="handleFormat"
+              style="margin-left: 20px; margin-bottom: 10px"
+              shape="round"
+              status="danger"
+              >格式化代码
+            </a-button>
+          </a-popconfirm>
         </a-form>
         <code-editor
-          v-bind:value="form.code as string"
+          v-model="localCode"
+          :value="localCode as string"
           :language="form.language"
           :handleChange="changeCode"
         />
@@ -91,7 +114,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect, withDefaults, defineProps } from "vue";
+import {
+  onMounted,
+  ref,
+  watchEffect,
+  withDefaults,
+  defineProps,
+  watch,
+  toRaw,
+} from "vue";
 import {
   QuestionControllerService,
   QuestionVO,
@@ -100,6 +131,43 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
+import { editor } from "monaco-editor";
+import * as http from "http";
+
+const handleFormat = () => {
+  if (form.value.modeSelect === 1) {
+    editor.getModels()[0]?.setValue(ACMdefaultcode.toString());
+  } else if (form.value.modeSelect === 0) {
+    editor.getModels()[0]?.setValue("");
+    message.error("请选择判题模式");
+  } else {
+    editor.getModels()[0]?.setValue(CCMdefaultcode.toString());
+  }
+};
+//获取编辑器中的文本
+const handleBtn = () => {
+  // 创建一个textarea元素，用于复制代码
+  var copyTextarea = document.createElement("textarea");
+
+  // 设置textarea元素的值为代码块中的内容
+  copyTextarea.value = localCode;
+
+  // 将textarea元素插入到页面中
+  document.body.appendChild(copyTextarea);
+
+  // 选中textarea元素的内容
+  copyTextarea.select();
+  copyTextarea.setSelectionRange(0, 99999); // 兼容移动设备
+
+  // 复制选中的内容
+  document.execCommand("copy");
+
+  // 从页面中移除临时的textarea元素
+  document.body.removeChild(copyTextarea);
+
+  // 提示用户代码已经复制
+  message.success("代码已复制到剪贴板");
+};
 
 interface Props {
   id: string;
@@ -117,11 +185,21 @@ let CMdisabled = true;
 
 const form = ref<QuestionSubmitAddRequest>({
   code: "",
-  language: "java",
-  modeSelect: 1,
+  language: "",
+  modeSelect: 0,
 });
 
-let modeSelectCN = "ACM模式";
+let modeSelectCN = ref("");
+const ACMdefaultcode =
+  "import java.util.Scanner;\n" +
+  "\n" +
+  "public class Main {\n" +
+  "    public static void main(String[] args) {\n" +
+  "\n" +
+  "    }\n" +
+  "}";
+let CCMdefaultcode: string;
+let localCode = ACMdefaultcode;
 
 const loadData = async () => {
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
@@ -130,9 +208,10 @@ const loadData = async () => {
   const defaultCode = await QuestionControllerService.getDefaultCodeUsingGet(
     props.id as any
   );
-  form.value.code = defaultCode.data;
-  console.log(defaultCode);
-  console.log(form.value.code);
+  if (defaultCode.code === 0) {
+    CCMdefaultcode = defaultCode.data ? defaultCode.data.toString() : "";
+  }
+
   if (res.code === 0) {
     question.value = res.data;
     switch (question.value?.mode) {
@@ -175,20 +254,8 @@ const doSubmit = async () => {
   if (!question.value?.id) {
     return;
   }
-  switch (modeSelectCN) {
-    case "ACM模式":
-      modeSelectCN = "1";
-      break;
-    case "核心代码模式":
-      modeSelectCN = "2";
-      break;
-    case "计数器模式":
-      modeSelectCN = "4";
-      break;
-  }
   const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
-    modeSelect: parseInt(modeSelectCN),
     questionId: question.value.id,
   });
   console.log(form.value);
@@ -198,9 +265,30 @@ const doSubmit = async () => {
     message.error("提交失败," + res.message);
   }
 };
-
+const changeMode = () => {
+  console.log("mode change");
+  switch (modeSelectCN.value) {
+    case "ACM模式":
+      // modeSelectCN = ref("1");
+      form.value.modeSelect = 1;
+      editor.getModels()[0]?.setValue(ACMdefaultcode.toString());
+      break;
+    case "核心代码模式":
+      // modeSelectCN = ref("2");
+      form.value.modeSelect = 2;
+      editor.getModels()[0]?.setValue(CCMdefaultcode.toString());
+      break;
+    case "计数器模式":
+      // modeSelectCN = ref("4");
+      editor.getModels()[0]?.setValue(CCMdefaultcode.toString());
+      form.value.modeSelect = 4;
+      break;
+  }
+};
 const changeCode = (value: string) => {
   form.value.code = value;
+  localCode = value;
+  console.log(localCode);
 };
 
 /**
