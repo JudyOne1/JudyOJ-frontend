@@ -11,4 +11,11 @@ module.exports = defineConfig({
   chainWebpack(config) {
     config.plugin("monaco").use(new MonacoWebpackPlugin());
   },
+  lintOnSave: false,
+  devServer: {
+    host: "localhost",
+    port: 8080,
+    historyApiFallback: true,
+    allowedHosts: "all",
+  },
 });

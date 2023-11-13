@@ -113,10 +113,10 @@ const loadData = async () => {
         item.status = "判题中...";
         break;
       case 2:
-        item.status = "成功";
+        item.status = "判题完成";
         break;
       case 3:
-        item.status = "失败";
+        item.status = "判题失败";
         break;
     }
   });

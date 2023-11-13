@@ -516,12 +516,6 @@ let form = ref({
     '    System.out.println("测试结束");\n' +
     "}",
   helpCode:
-    "import java.lang.reflect.Method;\n" +
-    "import java.lang.reflect.Parameter;\n" +
-    "import java.util.ArrayList;\n" +
-    "import java.util.Arrays;\n" +
-    "\n" +
-    "class Solution {\n" +
     "    public static void main(String[] args) {\n" +
     "\n" +
     '        //        String input = "gifts = [5,1,4,3,6], k = 10";\n' +
@@ -542,8 +536,7 @@ let form = ref({
     "        //        k = Integer.parseInt(params.get(i).getValue());\n" +
     "        System.out.println(solute(JAVAparseStringTo1ArrayNoNull(params.get(i++).getValue()), Integer.parseInt(params.get(i).getValue())));\n" +
     "        //--------------------------------------------------------------\n" +
-    "    }\n" +
-    "}",
+    "    }\n",
 });
 
 const handleAdd = () => {
@@ -561,7 +554,6 @@ onMounted(() => {
  * 根据题目 id 获取老的数据
  *
  */
-//TODO 模式选择缺失
 const loadData = async () => {
   const id = route.query.id;
   if (!id) {
@@ -634,6 +626,9 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("更新成功");
+      router.push({
+        path: `/manage/question`,
+      });
     } else {
       message.error("更新失败，" + res.message);
     }

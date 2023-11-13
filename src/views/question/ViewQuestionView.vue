@@ -3,39 +3,47 @@
     <a-row>
       <a-col :md="9" :xs="24">
         <a-tabs default-active-key="question">
-          <a-tab-pane key="question" title="题目">
-            <a-card v-if="question" :title="question.title">
-              <a-descriptions
-                title="判题条件"
-                :column="{ xs: 1, md: 2, lg: 3 }"
-              >
-                <a-descriptions-item label="时间限制">
-                  {{ question.judgeConfig.timeLimit ?? 0 }}
-                </a-descriptions-item>
-                <a-descriptions-item label="内存限制">
-                  {{ question.judgeConfig.memoryLimit ?? 0 }}
-                </a-descriptions-item>
-                <a-descriptions-item label="堆栈限制">
-                  {{ question.judgeConfig.stackLimit ?? 0 }}
-                </a-descriptions-item>
-              </a-descriptions>
-              <template #extra>
-                <a-space wrap>
-                  <a-tag
-                    v-for="(tag, index) of question.tags"
-                    :key="index"
-                    color="green"
-                    >{{ tag }}
-                  </a-tag>
-                </a-space>
-              </template>
-              <MdViewer
-                :value="question.content || '出现未知错误，请联系管理员'"
-              />
-            </a-card>
+          <a-scrollbar style="height: 100%; overflow: auto">
+            <div style="height: 450px; width: 500px">
+              <a-tab-pane key="question" title="题目">
+                <a-card v-if="question" :title="question.title">
+                  <a-descriptions
+                    title="判题条件"
+                    :column="{ xs: 1, md: 2, lg: 3 }"
+                  >
+                    <a-descriptions-item label="时间限制ms">
+                      {{ question.judgeConfig.timeLimit ?? 0 }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="内存限制kb">
+                      {{ question.judgeConfig.memoryLimit ?? 0 }}
+                    </a-descriptions-item>
+                    <a-descriptions-item label="堆栈限制kb">
+                      {{ question.judgeConfig.stackLimit ?? 0 }}
+                    </a-descriptions-item>
+                  </a-descriptions>
+                  <template #extra>
+                    <a-space wrap>
+                      <a-tag
+                        v-for="(tag, index) of question.tags"
+                        :key="index"
+                        color="green"
+                        >{{ tag }}
+                      </a-tag>
+                    </a-space>
+                  </template>
+                  <MdViewer
+                    :value="question.content || '出现未知错误，请联系管理员'"
+                  />
+                </a-card>
+              </a-tab-pane>
+            </div>
+          </a-scrollbar>
+          <a-tab-pane key="comments" title="评论" disabled>
+            评论区开发中
           </a-tab-pane>
-          <a-tab-pane key="comments" title="评论"> 评论区开发中</a-tab-pane>
-          <a-tab-pane key="idea" title="思路"> 思路区开发中</a-tab-pane>
+          <a-tab-pane key="idea" title="思路" disabled>
+            思路区开发中
+          </a-tab-pane>
           <a-tab-pane key="answer" title="题解" disabled>
             <!--{{ (question && question.answer) || "暂无题解" }}-->
           </a-tab-pane>
@@ -81,19 +89,27 @@
             @click="handleBtn"
             shape="round"
             status="success"
-            style="margin-left: 60px"
+            style="margin-left: 40px"
             >复制代码
           </a-button>
           <a-popconfirm content="如果无法格式化代码请刷新网站" type="warning">
             <a-button
               type="outline"
               @click="handleFormat"
-              style="margin-left: 20px; margin-bottom: 10px"
+              style="margin-left: 10px; margin-bottom: 10px"
               shape="round"
               status="danger"
               >格式化代码
             </a-button>
           </a-popconfirm>
+          <a-button
+            type="outline"
+            @click="reload"
+            style="margin-left: 10px; margin-bottom: 10px"
+            shape="round"
+            status="warning"
+            >刷新
+          </a-button>
         </a-form>
         <code-editor
           v-model="localCode"
@@ -127,13 +143,25 @@ import {
   QuestionControllerService,
   QuestionVO,
   QuestionSubmitAddRequest,
+  UserControllerService,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
 import { editor } from "monaco-editor";
 import * as http from "http";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
+// 如果页面地址包含 showAnswers=true，视为展示页面
+const showPage = route.query.showAnswers === "true";
+
+window.onload = function () {
+  message.info({
+    content: "如果没有题目数据请刷新页面",
+    closable: true,
+  });
+};
 const handleFormat = () => {
   if (form.value.modeSelect === 1) {
     editor.getModels()[0]?.setValue(ACMdefaultcode.toString());
@@ -178,6 +206,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const question = ref<QuestionVO>();
+const questionSubmit = ref<QuestionSubmitAddRequest>();
 
 let ACMdisabled = true;
 let CCMdisabled = true;
@@ -202,6 +231,26 @@ let CCMdefaultcode: string;
 let localCode = ACMdefaultcode;
 
 const loadData = async () => {
+  if (showPage) {
+    const res = await UserControllerService.getLoginUserUsingGet();
+    if (res.code === 0) {
+      const userData =
+        await QuestionControllerService.getQuestionSubmitByUserUsingGet(
+          props.id as any,
+          res.data?.id as any
+        );
+      if (userData.code === 0) {
+        questionSubmit.value = userData.data;
+        editor
+          .getModels()[0]
+          ?.setValue(questionSubmit.value?.code ?? "未知错误");
+      } else {
+        message.error("该题没有提交记录");
+      }
+    } else {
+      message.error("未登录，无法获取对应信息");
+    }
+  }
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
     props.id as any
   );
@@ -247,6 +296,8 @@ const loadData = async () => {
   }
 };
 
+const router = useRouter();
+
 /**
  * 提交代码
  */
@@ -261,6 +312,9 @@ const doSubmit = async () => {
   console.log(form.value);
   if (res.code === 0) {
     message.success("提交成功");
+    router.push({
+      path: `/question_submit`,
+    });
   } else {
     message.error("提交失败," + res.message);
   }
@@ -288,9 +342,11 @@ const changeMode = () => {
 const changeCode = (value: string) => {
   form.value.code = value;
   localCode = value;
-  console.log(localCode);
 };
 
+const reload = () => {
+  window.location.reload();
+};
 /**
  * 监听 searchParams 变量，改变时触发页面的重新加载
  */

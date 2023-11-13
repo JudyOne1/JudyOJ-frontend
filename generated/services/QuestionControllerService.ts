@@ -8,6 +8,7 @@ import type { BaseResponse_Page_Question_ } from '../models/BaseResponse_Page_Qu
 import type { BaseResponse_Page_QuestionSubmitVO_ } from '../models/BaseResponse_Page_QuestionSubmitVO_';
 import type { BaseResponse_Page_QuestionVO_ } from '../models/BaseResponse_Page_QuestionVO_';
 import type { BaseResponse_Question_ } from '../models/BaseResponse_Question_';
+import type { BaseResponse_QuestionSubmit_ } from '../models/BaseResponse_QuestionSubmit_';
 import type { BaseResponse_QuestionVO_ } from '../models/BaseResponse_QuestionVO_';
 import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
 import type { DeleteRequest } from '../models/DeleteRequest';
@@ -216,6 +217,32 @@ id?: number,
             url: '/api/question/question/getDefaultCode',
             query: {
                 'id': id,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * getQuestionSubmitByUser
+     * @param questionId questionId
+     * @param userId userId
+     * @returns BaseResponse_QuestionSubmit_ OK
+     * @throws ApiError
+     */
+    public static getQuestionSubmitByUserUsingGet(
+questionId?: number,
+userId?: number,
+): CancelablePromise<BaseResponse_QuestionSubmit_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/question/getQuestionSubmitByUser',
+            query: {
+                'questionId': questionId,
+                'userId': userId,
             },
             errors: {
                 401: `Unauthorized`,

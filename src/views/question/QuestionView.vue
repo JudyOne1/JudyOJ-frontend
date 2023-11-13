@@ -54,6 +54,16 @@
             做题
           </a-button>
         </a-space>
+        <a-space>
+          <a-button
+            style="margin-left: 10px"
+            type="primary"
+            status="success"
+            @click="doQuestionPageWithAns(record)"
+          >
+            提交记录
+          </a-button>
+        </a-space>
       </template>
     </a-table>
   </div>
@@ -151,7 +161,7 @@ const columns = [
   },
   {
     slotName: "optional",
-    width: 120,
+    width: 200,
   },
 ];
 
@@ -178,6 +188,15 @@ const router = useRouter();
 const doQuestionPage = (question: Question) => {
   router.push({
     path: `/view/question/${question.id}`,
+  });
+};
+
+const doQuestionPageWithAns = (question: Question) => {
+  router.push({
+    path: `/view/question/${question.id}`,
+    query: {
+      showAnswers: "true", // 添加一个名为showAnswers的查询参数，值为'true'
+    },
   });
 };
 </script>
