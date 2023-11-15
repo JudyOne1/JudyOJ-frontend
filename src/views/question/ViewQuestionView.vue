@@ -155,6 +155,7 @@ import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 // 如果页面地址包含 showAnswers=true，视为展示页面
 const showPage = route.query.showAnswers === "true";
+const submitHistory = route.query.submitId ? route.query.submitId : null;
 
 window.onload = function () {
   message.info({
@@ -229,16 +230,31 @@ const ACMdefaultcode =
   "}";
 let CCMdefaultcode: string;
 let localCode = ACMdefaultcode;
-
+let queryForm = ref({
+  questionId: -1,
+  userId: -1,
+  submitId: -1,
+});
 const loadData = async () => {
+  queryForm.value.questionId = props.id as any;
   if (showPage) {
     const res = await UserControllerService.getLoginUserUsingGet();
     if (res.code === 0) {
-      const userData =
-        await QuestionControllerService.getQuestionSubmitByUserUsingGet(
-          props.id as any,
-          res.data?.id as any
-        );
+      queryForm.value.userId = res.data?.id as any;
+      let userData;
+      if (submitHistory != null) {
+        queryForm.value.submitId = submitHistory as any;
+        userData =
+          await QuestionControllerService.getQuestionSubmitByUserUsingPost(
+            queryForm.value
+          );
+      } else {
+        userData =
+          await QuestionControllerService.getQuestionSubmitByUserUsingPost(
+            queryForm.value
+          );
+      }
+
       if (userData.code === 0) {
         questionSubmit.value = userData.data;
         editor

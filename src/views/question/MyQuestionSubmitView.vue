@@ -73,7 +73,7 @@
             type="primary"
             size="small"
             shape="round"
-            @click="doQuestionPage(record)"
+            @click="goInfoPage(record)"
           >
             查看详情
           </a-button>
@@ -100,7 +100,9 @@ import { onMounted, ref, watchEffect } from "vue";
 import {
   Question,
   QuestionControllerService,
+  QuestionSubmit,
   QuestionSubmitQueryRequest,
+  QuestionSubmitVO,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
@@ -140,13 +142,13 @@ const loadData = async () => {
         item.status = "待判题";
         break;
       case 1:
-        item.status = "判题中...";
+        item.status = "判题中";
         break;
       case 2:
-        item.status = "判题完成";
+        item.status = "判题完成✓";
         break;
       case 3:
-        item.status = "判题失败";
+        item.status = "判题失败×";
         break;
     }
   });
@@ -172,19 +174,27 @@ onMounted(() => {
 
 const columns = [
   {
-    title: "题目名称",
-    dataIndex: "questionVO.title",
-    tooltip: true,
-    ellipsis: true,
-    width: 120,
-  },
-  {
     title: "提交号",
     dataIndex: "id",
     tooltip: true,
     ellipsis: true,
     width: 120,
   },
+  {
+    title: "题目 id",
+    dataIndex: "questionId",
+    tooltip: true,
+    ellipsis: true,
+    width: 80,
+  },
+  {
+    title: "题目名称",
+    dataIndex: "questionVO.title",
+    tooltip: true,
+    ellipsis: true,
+    width: 150,
+  },
+
   {
     title: "编程语言",
     dataIndex: "language",
@@ -199,13 +209,7 @@ const columns = [
     dataIndex: "status",
     width: 100,
   },
-  {
-    title: "题目 id",
-    dataIndex: "questionId",
-    tooltip: true,
-    ellipsis: true,
-    width: 120,
-  },
+
   // {
   //   title: "提交者 id",
   //   dataIndex: "userId",
@@ -214,8 +218,11 @@ const columns = [
   //   width: 120,
   // },
   {
-    title: "创建时间",
+    title: "完成时间",
     slotName: "createTime",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
     width: 180,
   },
   {
@@ -224,10 +231,11 @@ const columns = [
   },
 ];
 
-const doQuestionPageWithAns = (question: QuestionSubmitQueryRequest) => {
+const doQuestionPageWithAns = (question: QuestionSubmitVO) => {
   router.push({
     path: `/view/question/${question.questionId}`,
     query: {
+      submitId: question.id,
       showAnswers: "true", // 添加一个名为showAnswers的查询参数，值为'true'
     },
   });
@@ -243,12 +251,12 @@ const onPageChange = (page: number) => {
 const router = useRouter();
 
 /**
- * 跳转到做题页面
- * @param question
+ * 跳转到提交信息页面
+ * @param questionSubmit
  */
-const toQuestionInfoPage = (question: Question) => {
+const goInfoPage = (questionSubmit: QuestionSubmit) => {
   router.push({
-    path: `/view/question/${question.id}`,
+    path: `/question_submit/info/${questionSubmit.id}`,
   });
 };
 

@@ -12,7 +12,7 @@
         total,
       }"
       @page-change="onPageChange"
-      style="width: 80%; margin: auto auto"
+      style="width: 95%; margin: auto auto"
     >
       <template #tags="{ record }">
         <a-space wrap>
@@ -112,11 +112,14 @@ const columns = [
     tooltip: true,
     ellipsis: true,
     dataIndex: "id",
-    width: 120,
+    width: 80,
   },
   {
     title: "标题",
     dataIndex: "title",
+    tooltip: true,
+    ellipsis: true,
+    width: 150,
   },
   // {
   //   title: "内容",
@@ -125,6 +128,7 @@ const columns = [
   {
     title: "标签",
     slotName: "tags",
+    width: 160,
   },
   // {
   //   title: "答案",
@@ -136,7 +140,7 @@ const columns = [
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
-    width: 100,
+    width: 98,
   },
   {
     title: "通过数",
@@ -144,7 +148,7 @@ const columns = [
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
-    width: 100,
+    width: 98,
   },
   {
     title: "判题配置",
@@ -155,6 +159,7 @@ const columns = [
     tooltip: true,
     ellipsis: true,
     dataIndex: "judgeCase",
+    width: 120,
   },
   // {
   //   title: "用户id",
@@ -166,11 +171,12 @@ const columns = [
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
+    width: 160,
   },
   {
     title: "操作",
     slotName: "optional",
-    width: 160,
+    width: 150,
   },
 ];
 

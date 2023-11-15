@@ -12,6 +12,7 @@ import QuestionView from "@/views/question/QuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserProfileView from "@/views/user/UserProfileView.vue";
 import MyQuestionSubmitView from "@/views/question/MyQuestionSubmitView.vue";
+import QuestionSubmitInfoView from "@/views/question/QuestionSubmitInfoView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -83,7 +84,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    //todo 个人主页需要装修
     path: "/profile/:id",
     name: "个人主页",
     component: UserProfileView,
@@ -99,6 +99,16 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.USER,
       hideInMenu: true,
+    },
+  },
+  {
+    path: "/question_submit/info/:id",
+    name: "提交信息页面",
+    component: QuestionSubmitInfoView,
+    props: true,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      // hideInMenu: true,
     },
   },
   {

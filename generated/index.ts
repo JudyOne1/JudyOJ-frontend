@@ -50,6 +50,7 @@ export type { QuestionEditRequest } from './models/QuestionEditRequest';
 export type { QuestionQueryRequest } from './models/QuestionQueryRequest';
 export type { QuestionSubmit } from './models/QuestionSubmit';
 export type { QuestionSubmitAddRequest } from './models/QuestionSubmitAddRequest';
+export type { QuestionSubmitQueryByIdRequest } from './models/QuestionSubmitQueryByIdRequest';
 export type { QuestionSubmitQueryRequest } from './models/QuestionSubmitQueryRequest';
 export type { QuestionSubmitVO } from './models/QuestionSubmitVO';
 export type { QuestionUpdateRequest } from './models/QuestionUpdateRequest';

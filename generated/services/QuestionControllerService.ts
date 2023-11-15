@@ -16,6 +16,7 @@ import type { QuestionAddRequest } from '../models/QuestionAddRequest';
 import type { QuestionEditRequest } from '../models/QuestionEditRequest';
 import type { QuestionQueryRequest } from '../models/QuestionQueryRequest';
 import type { QuestionSubmitAddRequest } from '../models/QuestionSubmitAddRequest';
+import type { QuestionSubmitQueryByIdRequest } from '../models/QuestionSubmitQueryByIdRequest';
 import type { QuestionSubmitQueryRequest } from '../models/QuestionSubmitQueryRequest';
 import type { QuestionUpdateRequest } from '../models/QuestionUpdateRequest';
 
@@ -228,22 +229,18 @@ id?: number,
 
     /**
      * getQuestionSubmitByUser
-     * @param questionId questionId
-     * @param userId userId
+     * @param request request
      * @returns BaseResponse_QuestionSubmit_ OK
+     * @returns any Created
      * @throws ApiError
      */
-    public static getQuestionSubmitByUserUsingGet(
-questionId?: number,
-userId?: number,
-): CancelablePromise<BaseResponse_QuestionSubmit_> {
+    public static getQuestionSubmitByUserUsingPost(
+request: QuestionSubmitQueryByIdRequest,
+): CancelablePromise<BaseResponse_QuestionSubmit_ | any> {
         return __request(OpenAPI, {
-            method: 'GET',
+            method: 'POST',
             url: '/api/question/question/getQuestionSubmitByUser',
-            query: {
-                'questionId': questionId,
-                'userId': userId,
-            },
+            body: request,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
