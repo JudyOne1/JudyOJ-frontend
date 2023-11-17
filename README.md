@@ -1,6 +1,12 @@
-# oj-frontend
+# JudyOJ-frontend
 
+[项目详情页面](https://github.com/JudyOne1/JudyOJ-backend)
+
+## 接口代码生成
+```bash
 openapi --input http://localhost:8121/api/v2/api-docs --output ./generated --client axios
+```
+
 ## Project setup
 ```
 yarn install
